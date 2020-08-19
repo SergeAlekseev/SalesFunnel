@@ -12,9 +12,8 @@ public class DatabaseConnect {
             Properties info = new Properties();
             info.setProperty("user", "postgres");
             info.setProperty("password", password);
-            info.setProperty("charSet","Cp1251");
             connection = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/" + dbName + "?useUnicode=true&amp;characterEncoding=utf8", info);
+                    .getConnection("jdbc:postgresql://localhost:5432/" + dbName, info);
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
