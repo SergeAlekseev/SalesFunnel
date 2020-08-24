@@ -14,6 +14,8 @@ import java.util.List;
 
 public class FunnelController {
 
+    private static final String PASSWORD = "333178";
+
     private static final String OPEN_BRACKET = " ( ";
     private static final String EQUALLS = " = ";
     private static final String ONE_QUOTE = "\'";
@@ -51,7 +53,7 @@ public class FunnelController {
 
 
     public FunnelController() throws SQLException {
-        dbConnect = new DatabaseConnect("SalesFunnel", "333178");
+        dbConnect = new DatabaseConnect("SalesFunnel", PASSWORD);
     }
 
     public String getSettings() throws SQLException, IOException {
