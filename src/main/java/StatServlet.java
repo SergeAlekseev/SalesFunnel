@@ -32,9 +32,17 @@ public class StatServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         String str = req.getParameter(OUTLETS);
-        List<String> sources = Arrays.asList(str.split(SPLIT));
+        List<String> sources = null;
+        if (str!=null)
+        {
+            sources = Arrays.asList(str.split(SPLIT));
+        }
         str = req.getParameter(BRANDS);
-        List<String> brands = Arrays.asList(str.split(SPLIT));
+        List<String> brands=null;
+        if (str!=null)
+        {
+            brands = Arrays.asList(str.split(SPLIT));
+        }
         String clientType = req.getParameter(TARGET);
         String category = req.getParameter(CATEGORY);
         String dateStart = req.getParameter(DATE_START);
@@ -43,11 +51,18 @@ public class StatServlet extends HttpServlet {
         resp.setContentType("application/json; charset=utf-8");
         PrintWriter printWriter = resp.getWriter();
 
-        try {
-            String statJson = funnelController.getStats(sources, clientType, brands, category, dateStart, dateEnd);
-            printWriter.write(statJson);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        if(clientType==null||dateStart==null||dateEnd==null)
+        {
+            resp.getWriter().print(HttpServletResponse.SC_BAD_REQUEST);
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }else
+        {
+            try {
+                String statJson = funnelController.getStats(sources, clientType, brands, category, dateStart, dateEnd);
+                printWriter.write(statJson);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
 
         printWriter.close();

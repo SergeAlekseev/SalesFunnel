@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+
 public class FunnelController {
 
     private static final String PASSWORD = "333178";
@@ -95,17 +96,16 @@ public class FunnelController {
 
     public String getStats(List<String> sources, String clientType, List<String> brands, String category, String startDate, String endDate) throws SQLException, IOException {
         Stat stat = new Stat();
-
         ResultSet rs = getResultStatistic(sources, clientType, brands, category, startDate, endDate);
 
         while (rs.next()) {
-            stat.addSale(rs.getString(1), rs.getDouble(3), rs.getInt(2));
+            stat.addSale(rs.getString(1), Math.ceil(rs.getDouble(3)*100)/100, rs.getInt(2));
         }
 
         rs = getSourceStatistic(sources, clientType, brands, category, startDate, endDate);
 
         while (rs.next()) {
-            stat.addSource(rs.getString(1), rs.getDouble(3));
+            stat.addSource(rs.getString(1),Math.ceil(rs.getDouble(3)*100)/100);
         }
 
         StringWriter stringWriter = new StringWriter();
@@ -134,12 +134,20 @@ public class FunnelController {
     }
 
     private String getFilterSQL(List<String> sources, String clientType, List<String> brands, String category, String startDate, String endDate) throws SQLException {
-        String filterSql = listStringToFilter(sources, Filter.SOURCE);
-        filterSql += AND;
-        filterSql += listStringToFilter(brands, Filter.BRAND);
-        filterSql += AND;
-        filterSql += stringTotFilter(category, Filter.CATEGORY);
-        filterSql += AND;
+        String filterSql = "";
+        if(sources!=null) {
+            filterSql = listStringToFilter(sources, Filter.SOURCE);
+            filterSql += AND;
+        }
+        if(brands!=null) {
+            filterSql += listStringToFilter(brands, Filter.BRAND);
+            filterSql += AND;
+        }
+        if(category!=null)
+        {
+            filterSql += stringTotFilter(category, Filter.CATEGORY);
+            filterSql += AND;
+        }
         filterSql += stringTotFilter(clientType, Filter.CLIENT_TYPE);
         filterSql += AND;
         filterSql += filterDate(startDate, endDate);
