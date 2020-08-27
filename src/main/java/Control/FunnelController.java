@@ -1,6 +1,7 @@
 package Control;
 
 import Model.Brand;
+import Model.Id;
 import Model.Setting;
 import Model.Stat;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,6 +56,29 @@ public class FunnelController {
 
     public FunnelController() throws SQLException {
         dbConnect = new DatabaseConnect("SalesFunnel", PASSWORD);
+    }
+
+    public String newMet(String name) throws SQLException, IOException {
+        try {
+            dbConnect.insert("INSERT INTO public.\"Source\"(\"nameSource\") VALUES (\'"+name+"\')");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        ResultSet rs=dbConnect.select("SELECT id_source FROM public.\"Source\" where \"nameSource\"=\'" + name + "\'");
+        rs.next();
+        String statJson = null;
+
+        statJson = getId(rs);
+
+        return statJson;
+    }
+    public String getId(ResultSet rs) throws SQLException, IOException {
+        Id id = new Id(rs.getInt(1));
+        StringWriter stringWriter = new StringWriter();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        objectMapper.writeValue(stringWriter, id);
+        return stringWriter.toString();
     }
 
     public String getSettings() throws SQLException, IOException {
